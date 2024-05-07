@@ -1,0 +1,12 @@
+---
+- name: Update Windows 10
+  hosts: windows_10
+  gather_facts: no
+  tasks:
+    - name: Run Windows Update
+      ansible.windows.win_updates:
+        category_names:
+          - SecurityUpdates
+          - UpdateRollups
+          - CriticalUpdates
+        state: installed
