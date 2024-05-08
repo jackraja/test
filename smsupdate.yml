@@ -1,16 +1,27 @@
 ---
-- name: Update Ubuntu 20.04
-  hosts: sms_srv
-  become: yes  # to escalate privileges as root
+- name: Update and upgrade apt packages
+  hosts: all
 
   tasks:
-    - name: Update package cache
-      apt:
-        update_cache: yes
-        allow_releaseinfo_change: yes  # Add this option to allow release info changes
+    - name: Update packages with apt
+      when: ansible_pkg_mgr == 'apt'
+      ansible.builtin.apt:
+        update_cache: true
 
-    - name: Upgrade all packages
-      apt:
+    - name: Update packages with yum
+      when: ansible_pkg_mgr == 'yum'
+      ansible.builtin.yum:
+        name: '*'
+        state: latest # noqa: package-latest
+
+    - name: Upgrade packages with apt
+      when: ansible_pkg_mgr == 'apt'
+      ansible.builtin.apt:
         upgrade: dist
-        autoremove: yes
-        autoclean: yes
+
+    - name: Upgrade packages with yum
+      when: ansible_pkg_mgr == 'yum'
+      ansible.builtin.yum:
+        name: '*'
+        state: latest # noqa: package-latest
+        exclude: kernel*
