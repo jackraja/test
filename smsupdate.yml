@@ -1,0 +1,16 @@
+---
+- name: Update Ubuntu 20.04
+  hosts: sms_srv
+  become: yes  # to escalate privileges as root
+
+  tasks:
+    - name: Update package cache
+      apt:
+        update_cache: yes
+        allow_releaseinfo_change: yes  # Add this option to allow release info changes
+
+    - name: Upgrade all packages
+      apt:
+        upgrade: dist
+        autoremove: yes
+        autoclean: yes
